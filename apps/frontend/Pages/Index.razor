@@ -4,21 +4,28 @@
 
 Welcome to your new app.
 
+<p>
 Data retrieved from backend:
 
-@Data
+<ul>
+    @foreach (var item in Data)
+    {
+        <li>@item</li>
+    }
+</ul>
+</p>
 
 <SurveyPrompt Title="How is Blazor working for you?" />
 
 @code {
 
-    public string Data;
+    public IEnumerable<string> Data;
 
     protected override async Task OnInitializedAsync()
     {
         var daprClient = new DaprClientBuilder().Build();
         var request = daprClient.CreateInvokeMethodRequest(HttpMethod.Get, "backend", "");
         var response = await daprClient.InvokeMethodWithResponseAsync(request);
-        Data = await response.Content.ReadAsStringAsync();
+        Data = await response.Content.ReadFromJsonAsync<IEnumerable<string>>();
     }
 }
