@@ -9,9 +9,23 @@ param frontendImageVersion string
 param backendImageName string
 param backendImageVersion string
 
+var cosmosDbName = 'db'
+var cosmosContainerName = 'names'
+
 resource rg 'Microsoft.Resources/resourceGroups@2020-10-01' = {
   name: baseName
   location: location
+}
+
+module cosmos 'cosmos.bicep' = {
+  scope: rg
+  name: 'cosmos'
+  params: {
+    containerName: cosmosContainerName
+    dbName: cosmosDbName
+    location: location
+    name: '${baseName}-${uniqueString(rg.id)}'
+  }
 }
 
 module environment 'environment.bicep' = {
@@ -49,6 +63,37 @@ module backend 'container_http.bicep' = {
     imageVersion: backendImageVersion
     exposed: false
     targetPort: 3000
+    daprComponents: [
+      {
+        name: 'statestore'
+        type: 'state.azure.cosmosdb'
+        version: 'v1'
+        metadata: [
+          {
+            name: 'url'
+            value: cosmos.outputs.endpoint
+          }
+          {
+            name: 'database'
+            value: cosmosDbName
+          }
+          {
+            name: 'collection'
+            value: cosmosContainerName
+          }
+          {
+            name: 'masterKey'
+            secretRef: 'masterKey'
+          }
+        ]
+      }
+    ]
+    secrets: [
+      {
+        name: 'masterKey'
+        value: cosmos.outputs.primaryKey
+      }
+    ]
   }
 }
 

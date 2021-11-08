@@ -7,6 +7,15 @@ param acrResourceGroup string = resourceGroup().name
 param createRevision bool = true
 param exposed bool = false
 param targetPort int
+param daprComponents array = []
+param secrets array = []
+
+var additionalSecrets = [
+  {
+    name: 'docker-password'
+    value: acr.listCredentials().passwords[0].value
+  }
+]
 
 resource environment 'Microsoft.Web/kubeEnvironments@2021-02-01' existing = {
   name: environmentName
@@ -24,12 +33,7 @@ resource container 'Microsoft.Web/containerApps@2021-03-01' = {
   properties: {
     kubeEnvironmentId: environment.id
     configuration: {
-      secrets: [
-        {
-          name: 'docker-password'
-          value: acr.listCredentials().passwords[0].value
-        }
-      ]
+      secrets: union(secrets, additionalSecrets)
       registries: [
         {
           server: acr.properties.loginServer
@@ -65,7 +69,7 @@ resource container 'Microsoft.Web/containerApps@2021-03-01' = {
         enabled: true
         appPort: targetPort
         appId: imageName
-        components: []
+        components: daprComponents
       }
     }
   }
