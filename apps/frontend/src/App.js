@@ -6,7 +6,7 @@ const daprPort = process.env.DAPR_HTTP_PORT || 3500;
 const daprSidecar = `http://localhost:${daprPort}`
 
 const getData = async function () {
-  let response = await fetch(`${daprSidecar}/v1.0/invoke/backend`);
+  let response = await fetch(`${daprSidecar}/v1.0/invoke/backend/method/`);
   return response.json();
 }
 
