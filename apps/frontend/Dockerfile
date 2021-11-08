@@ -1,17 +1,19 @@
-FROM node:17 AS builder
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 
 WORKDIR /app
 
+COPY frontend.csproj .
+
+RUN dotnet restore
+
 COPY . .
 
-RUN npm install && npm run build
+RUN dotnet publish --no-restore -c Release -o ./publish
 
-FROM nginx:alpine
+FROM  mcr.microsoft.com/dotnet/sdk:5.0 AS final
 
-WORKDIR /usr/share/nginx/html
+WORKDIR /app
 
-RUN rm -rf ./*
+COPY --from=build /app/publish .
 
-COPY --from=builder /app/build .
-
-ENTRYPOINT ["nginx", "-g", "daemon off;"]
+ENTRYPOINT [ "dotnet", "frontend.dll" ]

@@ -33,7 +33,7 @@ module frontend 'container_http.bicep' = {
     imageName: frontendImageName
     imageVersion: frontendImageVersion
     exposed: true
-    targetPort: 80
+    targetPort: 5000
   }
 }
 

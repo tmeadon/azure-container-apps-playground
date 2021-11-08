@@ -1,0 +1,27 @@
+@using Dapr.Client
+@using System.Text.Json
+@using System.Net.Http.Json
+@page "/"
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+Data retrieved from backend:
+
+@Data
+
+<SurveyPrompt Title="How is Blazor working for you?" />
+
+@code {
+
+    public string Data;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var daprClient = new DaprClientBuilder().Build();
+        var request = daprClient.CreateInvokeMethodRequest("backend", "");
+        var response = await daprClient.InvokeMethodWithResponseAsync(request);
+        Data = await response.Content.ReadAsStringAsync();
+    }
+}
