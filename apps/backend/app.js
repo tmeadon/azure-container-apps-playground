@@ -7,6 +7,6 @@ app.listen(3000, () => {
 });
 
 app.get("/", (req, res, next) => {
-    res.json(["abc", "def", 123, "9123"]);
+    res.json(["abc", "def", "123", "9123"]);
 });
 
