@@ -83,14 +83,14 @@ module backend 'container_http.bicep' = {
           }
           {
             name: 'masterKey'
-            secretRef: 'masterKey'
+            secretRef: 'masterkey'
           }
         ]
       }
     ]
     secrets: [
       {
-        name: 'masterKey'
+        name: 'masterkey'
         value: cosmos.outputs.primaryKey
       }
     ]
