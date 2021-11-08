@@ -39,7 +39,7 @@ resource container 'Microsoft.Web/containerApps@2021-03-01' = {
       ]
       ingress: {
         external: exposed
-        targetPort: 80
+        targetPort: targetPort
         transport: 'auto'
         traffic: [
           {
