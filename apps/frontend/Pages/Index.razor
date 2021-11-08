@@ -8,18 +8,23 @@ Welcome to your new app.
 Data retrieved from backend:
 
 <ul>
-    @foreach (var item in Data)
+    @if (Data == null)
     {
-        <li>@item</li>
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        @foreach (var item in Data)
+        {
+            <li>@item</li>
+        }
     }
 </ul>
 </p>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
-
 @code {
 
-    public IEnumerable<string> Data = new List<string>();
+    public IEnumerable<string> Data;
 
     protected override async Task OnInitializedAsync()
     {
