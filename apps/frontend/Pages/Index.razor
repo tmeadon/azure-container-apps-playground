@@ -44,9 +44,16 @@ Data retrieved from backend:
 
     private async Task GetNamesFromBackendAsync()
     {
-        var request = daprClient.CreateInvokeMethodRequest(HttpMethod.Get, "backend", "");
-        var response = await daprClient.InvokeMethodWithResponseAsync(request);
-        names = await response.Content.ReadFromJsonAsync<IEnumerable<string>>();
+        try
+        {
+            var request = daprClient.CreateInvokeMethodRequest(HttpMethod.Get, "backend", "");
+            var response = await daprClient.InvokeMethodWithResponseAsync(request);
+            names = await response.Content.ReadFromJsonAsync<IEnumerable<string>>();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
     }
 
     private async Task UpdateNamesInBackendAsync()
