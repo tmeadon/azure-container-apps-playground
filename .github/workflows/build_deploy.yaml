@@ -73,4 +73,8 @@ jobs:
         with: 
           azcliversion: 2.29.2
           inlineScript: |
-            az deployment sub create -l northeurope -f ./iac/main.bicep -p frontendImageName=frontend frontendImageVersion='${{ needs.build.outputs.version }}'
+            az deployment sub create -l northeurope -f ./iac/main.bicep -p \
+              frontendImageName=frontend \
+              frontendImageVersion='${{ needs.build.outputs.version }}' \
+              backendImageName=backend \
+              backendImageVersion='${{ needs.build.outputs.version }}'
