@@ -8,9 +8,9 @@ app.listen(3000, () => {
     console.log("Server running on port 3000");
 });
 
-app.get("/:id", async (req, res) => {
+app.get("/", async (req, res) => {
     try {
-        const response = await axios.get(`${daprBaseUrl}/state/statestore/${req.params.id}`);
+        const response = await axios.get(`${daprBaseUrl}/state/statestore/names`);
         res.json(response.data);
     }
     catch (error) {
@@ -19,11 +19,11 @@ app.get("/:id", async (req, res) => {
     }
 });
 
-app.post("/:id", async (req, res) => {
+app.post("/", async (req, res) => {
     try {
         const response = await axios.post(`${daprBaseUrl}/state/statestore`, [
             {
-                key: req.params.id,
+                key: "names",
                 value: req.body
             }
         ]);
