@@ -5,6 +5,8 @@ param environmentName string
 param acrName string
 param acrResourceGroup string = resourceGroup().name
 param createRevision bool = true
+param exposed bool = false
+param targetPort int
 
 resource environment 'Microsoft.Web/kubeEnvironments@2021-02-01' existing = {
   name: environmentName
@@ -36,7 +38,7 @@ resource container 'Microsoft.Web/containerApps@2021-03-01' = {
         }
       ]
       ingress: {
-        external: true
+        external: exposed
         targetPort: 80
         transport: 'auto'
         traffic: [
@@ -61,7 +63,7 @@ resource container 'Microsoft.Web/containerApps@2021-03-01' = {
       }
       dapr: {
         enabled: true
-        appPort: 80
+        appPort: targetPort
         appId: imageName
         components: []
       }

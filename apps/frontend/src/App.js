@@ -1,7 +1,25 @@
 import logo from './logo.svg';
 import './App.css';
+import React, { useState, useEffect } from 'react';
+
+const daprPort = process.env.DAPR_HTTP_PORT || 3500;
+const daprSidecar = `http://localhost:${daprPort}`
+
+const getData = async function () {
+  let response = await fetch(`${daprSidecar}/v1.0/invoke/backend`);
+  return response.json();
+}
 
 function App() {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    (async function () {
+      let data = await getData();
+      setData(data);
+    })();
+  }, []);
+
   return (
     <div className="App">
       <header className="App-header">

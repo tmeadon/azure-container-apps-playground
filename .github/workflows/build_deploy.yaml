@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        services: [ {'imageName': 'frontend', 'directory': './apps/frontend'} ]
+        services: [ {'imageName': 'frontend', 'directory': './apps/frontend'}, {'imageName': 'backend', 'directory': './apps/backend'} ]
     permissions:
       contents: read
       packages: write
