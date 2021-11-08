@@ -35,6 +35,9 @@ function App() {
         >
           Learn React
         </a>
+        <p>
+          {data}
+        </p>
       </header>
     </div>
   );
