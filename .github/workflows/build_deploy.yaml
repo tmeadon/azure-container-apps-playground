@@ -15,9 +15,7 @@ jobs:
       contents: read
       packages: write
     outputs:
-      containerImage-node: ${{ steps.image-tag.outputs.image-node-service }}
-      containerImage-python: ${{ steps.image-tag.outputs.image-python-service }}
-      containerImage-go: ${{ steps.image-tag.outputs.image-go-service }}
+      version: ${{ steps.image-tag.outputs.version }}
     steps:
       - name: checkout repository
         uses: actions/checkout@v2
@@ -69,10 +67,10 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-        
+
       - name: deploy bicep
         uses: azure/CLI@v1
         with: 
           azcliversion: 2.29.2
           inlineScript: |
-            az deployment sub create -l northeurope -f ./iac/main.bicep -p frontendImageName=frontend  frontendImageVersion='${{ needs.build.outputs.version }}'
+            az deployment sub create -l northeurope -f ./iac/main.bicep -p frontendImageName=frontend frontendImageVersion='${{ needs.build.outputs.version }}'
