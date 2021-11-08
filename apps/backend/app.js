@@ -8,19 +8,33 @@ app.listen(3000, () => {
     console.log("Server running on port 3000");
 });
 
-app.get("/:id", (req, res) => {
-    const response = await axios.get(`${daprBaseUrl}/state/statestore/${req.params.id}`);
-    res.json(response.data);
+app.get("/:id", async (req, res) => {
+    try {
+        const response = await axios.get(`${daprBaseUrl}/state/statestore/${req.params.id}`);
+        res.json(response.data);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500);
+    }
 });
 
-app.post("/:id", (req, res) => {
-    const response = await axios.post(`${daprBaseUrl}/state/statestore`, [
-        {
-            key: req.params.id,
-            value: req.body
-        }
-    ]);
+app.post("/:id", async (req, res) => {
+    try {
+        const response = await axios.post(`${daprBaseUrl}/state/statestore`, [
+            {
+                key: req.params.id,
+                value: req.body
+            }
+        ]);
+    
+        console.log(response.data);
+        res.status(204);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500);
+    }
 
-    console.log(response.data);
 })
 
