@@ -56,5 +56,23 @@ jobs:
       
       - name: Output image tag
         id: image-tag
-        run: echo "::set-output name=image-${{ matrix.services.imageName }}::${{ env.REGISTRY_LOGIN_SERVER }}/${{ matrix.services.imageName }}:sha-$(git rev-parse --short HEAD)" | tr '[:upper:]' '[:lower:]'
+        run: echo "::set-output name=version::sha-$(git rev-parse --short HEAD)" | tr '[:upper:]' '[:lower:]'
   
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v2
+
+      - name: azure login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+        
+      - name: deploy bicep
+        uses: azure/CLI@v1
+        with: 
+          azcliversion: 2.29.2
+          inlineScript: |
+            az deployment sub create -l northeurope -f ./iac/main.bicep -p frontendImageName=frontend  frontendImageVersion='${{ needs.build.outputs.version }}'
