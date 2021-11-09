@@ -84,4 +84,4 @@ resource container 'Microsoft.Web/containerApps@2021-03-01' = {
   }
 }
 
-output fqdn string = container.properties.configuration.ingress.fqdn
+output fqdn string = ingressEnabled ? container.properties.configuration.ingress.fqdn : null
