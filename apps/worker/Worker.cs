@@ -57,7 +57,7 @@ namespace worker
                     }
                     catch (Exception e) 
                     {
-                        _logger.LogError($"Unable to process message: {e.Message}");
+                        _logger.LogError(e, "Unable to process message");
 
                         if (message.Value.DequeueCount > 5)
                         {
