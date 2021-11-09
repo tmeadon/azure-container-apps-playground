@@ -63,8 +63,17 @@ Data retrieved from backend:
             var newList = new List<string>(names);
             newList.Add(newName);
             Console.WriteLine($"Sending following new list to backend: {string.Join(", ", newList)}");
-            var request = daprClient.CreateInvokeMethodRequest<IEnumerable<string>>(HttpMethod.Post, "backend", "", newList);
-            await daprClient.InvokeMethodAsync(request);
+            
+            try
+            {
+                var request = daprClient.CreateInvokeMethodRequest<IEnumerable<string>>(HttpMethod.Post, "backend", "", newList);
+                await daprClient.InvokeMethodAsync(request);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+
             newName = "";
             await GetNamesFromBackendAsync();
         }
@@ -74,8 +83,17 @@ Data retrieved from backend:
     {
         Console.WriteLine("Clearing list");
         var newList = new List<string>();
-        var request = daprClient.CreateInvokeMethodRequest<IEnumerable<string>>(HttpMethod.Post, "backend", "", newList);
-        await daprClient.InvokeMethodAsync(request);
+        
+        try 
+        {
+            var request = daprClient.CreateInvokeMethodRequest<IEnumerable<string>>(HttpMethod.Post, "backend", "", newList);
+            await daprClient.InvokeMethodAsync(request);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+        
         await GetNamesFromBackendAsync();
     }
 }
