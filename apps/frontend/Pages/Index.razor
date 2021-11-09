@@ -45,6 +45,7 @@ Data retrieved from backend:
             var responseString = await response.Content.ReadAsStringAsync();
             Console.WriteLine($"Received response {responseString} from backend");
             names = JsonSerializer.Deserialize<List<string>>(responseString);
+            StateHasChanged();
         }
         catch (Exception e)
         {
