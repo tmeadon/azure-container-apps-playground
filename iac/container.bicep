@@ -24,8 +24,6 @@ var ingressRule = {
   ]
 }
 
-var ingress = ingressEnabled ? ingressRule : {}
-
 var additionalSecrets = [
   {
     name: 'docker-password'
@@ -57,7 +55,7 @@ resource container 'Microsoft.Web/containerApps@2021-03-01' = {
           passwordSecretRef: 'docker-password'
         }
       ]
-      ingress: ingress
+      ingress: ingressEnabled ? ingressRule : null
     }
     template: {
       revisionSuffix: createRevision ? imageVersion : null
