@@ -60,6 +60,7 @@ Data retrieved from backend:
     {
         if (!string.IsNullOrEmpty(newName))
         {
+            await GetNamesFromBackendAsync();
             var newList = new List<string>(names);
             newList.Add(newName);
             Console.WriteLine($"Sending following new list to backend: {string.Join(", ", newList)}");
@@ -93,7 +94,7 @@ Data retrieved from backend:
         {
             Console.WriteLine(e.Message);
         }
-        
+
         await GetNamesFromBackendAsync();
     }
 }
