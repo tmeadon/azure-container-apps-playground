@@ -74,7 +74,7 @@ resource container 'Microsoft.Web/containerApps@2021-03-01' = {
       }
       dapr: {
         enabled: true
-        appPort: ingressEnabled ? targetPort : null
+        appPort: ingressEnabled ? targetPort : 0
         appId: imageName
         components: daprComponents
       }
