@@ -12,6 +12,7 @@ param secrets array = []
 param scaleRules array = []
 param ingressEnabled bool = true
 param env array = []
+param activeRevisionsMode string = 'multiple'
 
 var ingressRule = {
   external: exposed
@@ -57,6 +58,7 @@ resource container 'Microsoft.Web/containerApps@2021-03-01' = {
         }
       ]
       ingress: ingressEnabled ? ingressRule : null
+      activeRevisionsMode: activeRevisionsMode
     }
     template: {
       revisionSuffix: createRevision ? imageVersion : null

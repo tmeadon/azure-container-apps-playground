@@ -129,6 +129,7 @@ module worker 'container.bicep' = {
     daprComponents: [
       stateStoreDaprComponent
     ]
+    activeRevisionsMode: 'single'
     scaleRules: [
       {
         name: 'queue-keda-scale'
