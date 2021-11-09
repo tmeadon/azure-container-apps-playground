@@ -134,7 +134,7 @@ module worker 'container.bicep' = {
       {
         name: 'queue-keda-scale'
         custom: {
-          type: 'azure-queuue'
+          type: 'azure-queue'
           metadata: {
             queueName: queueName
             messageCount: '1'
