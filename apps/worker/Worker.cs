@@ -52,6 +52,7 @@ namespace worker
                         var bodyList = message.Value.Body.ToObjectFromJson<List<string>>();
                         _logger.LogInformation($"New list items: {string.Join(", ", bodyList)}");
                         var currentList = await _daprClient.GetStateAsync<List<string>>("statestore", "names", null, null, stoppingToken);
+                        _logger.LogInformation($"dapr response: {currentList.Count}");
                         _logger.LogInformation($"Current list items: {string.Join(", ", currentList)}");
                         currentList.AddRange(bodyList);
                         await _daprClient.SaveStateAsync<List<string>>("statestore", "names", currentList);
