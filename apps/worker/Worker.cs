@@ -1,4 +1,7 @@
 using System;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Text.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -41,35 +44,30 @@ namespace worker
             {
                 _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
 
-                var message = await _queueClient.ReceiveMessageAsync(null, stoppingToken);
+                var queueResponse = await _queueClient.ReceiveMessagesAsync(10, null, stoppingToken);
 
-                if (message.Value != null)
+                foreach (var message in queueResponse.Value)
                 {
-                    _logger.LogInformation($"Message received with body: {message.Value.Body}");
+                    _logger.LogInformation($"Message received with body: {message.Body.ToString()}");
 
                     try
                     {
-                        var bodyList = message.Value.Body.ToObjectFromJson<List<string>>();
-                        _logger.LogInformation($"New list items: {string.Join(", ", bodyList)}");
+                        var newItems = message.Body.ToObjectFromJson<IEnumerable<string>>();
                         var currentList = await _daprClient.GetStateAsync<List<string>>("statestore", "names", null, null, stoppingToken);
-                        _logger.LogInformation($"dapr response: {currentList.Count}");
-                        _logger.LogInformation($"Current list items: {string.Join(", ", currentList)}");
-                        currentList.AddRange(bodyList);
+                        currentList.AddRange(newItems);
+                        _logger.LogInformation($"Updating list to {string.Join(", ", currentList)}");
                         await _daprClient.SaveStateAsync<List<string>>("statestore", "names", currentList);
-                        await _queueClient.DeleteMessageAsync(message.Value.MessageId, message.Value.PopReceipt, stoppingToken);
+                        await _queueClient.DeleteMessageAsync(message.MessageId, message.PopReceipt, stoppingToken);
                     }
                     catch (Exception e) 
                     {
-                        _logger.LogError(e, "Unable to process message");
-                        _logger.LogError(e.InnerException, "Inner exception");
+                        _logger.LogError(e, $"Unable to process message {e.InnerException.Message}");
 
-                        if (message.Value.DequeueCount > 5)
+                        if (message.DequeueCount > 5)
                         {
-                            await _queueClient.DeleteMessageAsync(message.Value.MessageId, message.Value.PopReceipt, stoppingToken);
+                            await _queueClient.DeleteMessageAsync(message.MessageId, message.PopReceipt, stoppingToken);
                         }
                     }
-                    
-                    
                 }
 
                 await Task.Delay(5000);

@@ -76,6 +76,10 @@ var stateStoreDaprComponent = {
       name: 'masterKey'
       secretRef: 'masterkey'
     }
+    {
+      name: 'keyPrefix'
+      value: 'name'
+    }
   ]
 }
 
