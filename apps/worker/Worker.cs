@@ -60,6 +60,7 @@ namespace worker
                     catch (Exception e) 
                     {
                         _logger.LogError(e, "Unable to process message");
+                        _logger.LogError(e.InnerException, "Inner exception");
 
                         if (message.Value.DequeueCount > 5)
                         {
