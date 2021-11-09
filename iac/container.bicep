@@ -11,6 +11,7 @@ param daprComponents array = []
 param secrets array = []
 param scaleRules array = []
 param ingressEnabled bool = true
+param env array = []
 
 var ingressRule = {
   external: exposed
@@ -63,6 +64,7 @@ resource container 'Microsoft.Web/containerApps@2021-03-01' = {
         {
           image: '${acr.properties.loginServer}/${imageName}:${imageVersion}' 
           name: imageName
+          env: env
         }
       ]
       scale: {

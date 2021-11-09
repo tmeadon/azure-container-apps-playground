@@ -147,6 +147,16 @@ module worker 'container.bicep' = {
         }
       }
     ]
+    env: [
+      {
+        name: 'STORAGE_CONNECTION'
+        secretref: 'storageconnection'
+      }
+      {
+        name: 'QUEUE_NAME'
+        value: queueName
+      }
+    ]
     secrets: [
       {
         name: 'masterkey'
