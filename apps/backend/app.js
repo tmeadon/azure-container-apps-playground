@@ -15,7 +15,7 @@ app.get("/", async (req, res) => {
     try {
         const response = await axios.get(`${daprBaseUrl}/state/statestore/names`);
         let returnValue = response.data ?? []
-        console.log(`Received response ${response.data}.  Returning ${returnValue}`);
+        console.log(`Received the following from dapr state backend ${returnValue}`);
         res.json(returnValue);
     }
     catch (error) {
@@ -26,15 +26,15 @@ app.get("/", async (req, res) => {
 
 app.post("/", async (req, res) => {
     try {
-        console.log(`updating names to ${req.body}`)
+        console.log(`Updating names in dapr state backend to ${req.body}`)
 
-        const response = await axios.post(`${daprBaseUrl}/state/statestore`, [
+        await axios.post(`${daprBaseUrl}/state/statestore`, [
             {
                 key: "names",
                 value: req.body
             }
         ]);
-        
+
         res.json(req.body);
     }
     catch (error) {

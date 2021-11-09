@@ -43,6 +43,7 @@ Data retrieved from backend:
     {
         try
         {
+            Console.WriteLine("Getting list from backend");
             var request = daprClient.CreateInvokeMethodRequest(HttpMethod.Get, "backend", "");
             var response = await daprClient.InvokeMethodWithResponseAsync(request);
             var responseString = await response.Content.ReadAsStringAsync();
@@ -71,6 +72,7 @@ Data retrieved from backend:
 
     private async Task ClearNameListInBackendAsync()
     {
+        Console.WriteLine("Clearing list");
         var newList = new List<string>();
         var request = daprClient.CreateInvokeMethodRequest<IEnumerable<string>>(HttpMethod.Post, "backend", "", newList);
         await daprClient.InvokeMethodAsync(request);
