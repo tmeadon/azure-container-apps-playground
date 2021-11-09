@@ -4,6 +4,9 @@ const app = express();
 const daprPort = process.env.DAPR_HTTP_PORT || 3500;
 const daprBaseUrl = `http://localhost:${daprPort}/v1.0`
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }))
+
 app.listen(3000, () => {
     console.log("Server running on port 3000");
 });
