@@ -6,9 +6,25 @@ param acrName string
 param acrResourceGroup string = resourceGroup().name
 param createRevision bool = true
 param exposed bool = false
-param targetPort int
+param targetPort int = 80
 param daprComponents array = []
 param secrets array = []
+param scaleRules array = []
+param ingressEnabled bool = true
+
+var ingressRule = {
+  external: exposed
+  targetPort: targetPort
+  transport: 'auto'
+  traffic: [
+    {
+      latestRevision: true
+      weight: 100
+    }
+  ]
+}
+
+var ingress = ingressEnabled ? ingressRule : null
 
 var additionalSecrets = [
   {
@@ -41,17 +57,7 @@ resource container 'Microsoft.Web/containerApps@2021-03-01' = {
           passwordSecretRef: 'docker-password'
         }
       ]
-      ingress: {
-        external: exposed
-        targetPort: targetPort
-        transport: 'auto'
-        traffic: [
-          {
-            latestRevision: true
-            weight: 100
-          }
-        ]
-      }
+      ingress: ingress
     }
     template: {
       revisionSuffix: createRevision ? imageVersion : null
@@ -64,6 +70,7 @@ resource container 'Microsoft.Web/containerApps@2021-03-01' = {
       scale: {
         minReplicas: 0
         maxReplicas: 1
+        rules: scaleRules
       }
       dapr: {
         enabled: true

@@ -8,9 +8,12 @@ param frontendImageName string
 param frontendImageVersion string
 param backendImageName string
 param backendImageVersion string
+param workerImageName string
+param workerImageVersion string
 
 var cosmosDbName = 'db'
 var cosmosContainerName = 'names'
+var queueName = 'names'
 
 resource rg 'Microsoft.Resources/resourceGroups@2020-10-01' = {
   name: baseName
@@ -36,7 +39,7 @@ module environment 'environment.bicep' = {
   }
 }
 
-module frontend 'container_http.bicep' = {
+module frontend 'container.bicep' = {
   scope: rg
   name: 'frontend'
   params: {
@@ -47,11 +50,36 @@ module frontend 'container_http.bicep' = {
     imageName: frontendImageName
     imageVersion: frontendImageVersion
     exposed: true
+    ingressEnabled: true
     targetPort: 5000
   }
 }
 
-module backend 'container_http.bicep' = {
+var stateStoreDaprComponent = {
+  name: 'statestore'
+  type: 'state.azure.cosmosdb'
+  version: 'v1'
+  metadata: [
+    {
+      name: 'url'
+      value: cosmos.outputs.endpoint
+    }
+    {
+      name: 'database'
+      value: cosmosDbName
+    }
+    {
+      name: 'collection'
+      value: cosmosContainerName
+    }
+    {
+      name: 'masterKey'
+      secretRef: 'masterkey'
+    }
+  ]
+}
+
+module backend 'container.bicep' = {
   scope: rg
   name: 'backend'
   params: {
@@ -61,37 +89,72 @@ module backend 'container_http.bicep' = {
     location: location
     imageName: backendImageName
     imageVersion: backendImageVersion
+    ingressEnabled: true
     exposed: false
     targetPort: 3000
     daprComponents: [
+      stateStoreDaprComponent
+    ]
+    secrets: [
       {
-        name: 'statestore'
-        type: 'state.azure.cosmosdb'
-        version: 'v1'
-        metadata: [
-          {
-            name: 'url'
-            value: cosmos.outputs.endpoint
+        name: 'masterkey'
+        value: cosmos.outputs.primaryKey
+      }
+    ]
+  }
+}
+
+module queue 'storage-queue.bicep' = {
+  scope: rg
+  name: 'storage-queue'
+  params: {
+    location: location
+    queueName: queueName
+    storageName: '${baseName}-${uniqueString(rg.id)}'
+  }
+}
+
+module worker 'container.bicep' = {
+  scope: rg
+  name: 'worker'
+  params: {
+    acrName: acrName
+    acrResourceGroup: acrResourceGroupName 
+    environmentName: baseName
+    location: location
+    imageName: workerImageName
+    imageVersion: workerImageVersion
+    exposed: false
+    ingressEnabled: false
+    daprComponents: [
+      stateStoreDaprComponent
+    ]
+    scaleRules: [
+      {
+        name: 'queue-keda-scale'
+        custom: {
+          type: 'azure-queuue'
+          metadata: {
+            queueName: queueName
+            messageCount: '1'
           }
-          {
-            name: 'database'
-            value: cosmosDbName
-          }
-          {
-            name: 'collection'
-            value: cosmosContainerName
-          }
-          {
-            name: 'masterKey'
-            secretRef: 'masterkey'
-          }
-        ]
+          auth: [
+            {
+              secretRef: 'storageConnection'
+              triggerParameter: 'connection'
+            }
+          ]
+        }
       }
     ]
     secrets: [
       {
         name: 'masterkey'
         value: cosmos.outputs.primaryKey
+      }
+      {
+        name: 'storageConnection'
+        value: queue.outputs.storageConnection
       }
     ]
   }
