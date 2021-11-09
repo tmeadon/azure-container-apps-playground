@@ -24,7 +24,7 @@ var ingressRule = {
   ]
 }
 
-var ingress = ingressEnabled ? ingressRule : null
+var ingress = ingressEnabled ? ingressRule : {}
 
 var additionalSecrets = [
   {
