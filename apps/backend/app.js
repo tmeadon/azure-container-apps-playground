@@ -11,9 +11,9 @@ app.listen(3000, () => {
 app.get("/", async (req, res) => {
     try {
         const response = await axios.get(`${daprBaseUrl}/state/statestore/names`);
-        let returnValue = response.data ?? [];
+        let returnValue = response.data;
         console.log(`Received response ${response.data}.  Returning ${returnValue}`);
-        res.json(response.data ?? []);
+        res.json(response.data);
     }
     catch (error) {
         console.error(error);
@@ -23,6 +23,8 @@ app.get("/", async (req, res) => {
 
 app.post("/", async (req, res) => {
     try {
+        console.log(`updating names to ${req.body}`);
+
         const response = await axios.post(`${daprBaseUrl}/state/statestore`, [
             {
                 key: "names",
