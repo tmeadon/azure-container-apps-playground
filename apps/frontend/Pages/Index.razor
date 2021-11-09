@@ -22,7 +22,7 @@ Data retrieved from backend:
 <br>
 
 <input @bind="newName"/>
-<button @onclick="UpdateNamesInBackendAsync">Post to backend</button>
+<button @onclick="@(async () => await UpdateNamesInBackendAsync())">Post to backend</button>
 
 @code {
 
