@@ -34,9 +34,8 @@ app.post("/", async (req, res) => {
                 value: req.body
             }
         ]);
-    
-        console.log(response.data);
-        res.status(204);
+        
+        res.json(req.body);
     }
     catch (error) {
         console.error(error);
