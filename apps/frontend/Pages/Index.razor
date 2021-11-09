@@ -70,7 +70,7 @@ Data retrieved from backend:
             var newList = new List<string>();
             newList.AddRange(names);
             newList.Add(newName);
-            Console.WriteLine($"Sending following new list to backend: {string.Join(', ', newList)}");
+            Console.WriteLine($"Sending following new list to backend: {string.Join(", ", newList)}");
             var request = daprClient.CreateInvokeMethodRequest<IEnumerable<string>>(HttpMethod.Post, "backend", "", newList);
             await daprClient.InvokeMethodAsync(request);
             await GetNamesFromBackendAsync();
