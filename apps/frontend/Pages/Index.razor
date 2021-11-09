@@ -22,8 +22,9 @@ Data retrieved from backend:
 <br>
 
 <input @bind="newName"/>
-<button @onclick="@(async () => await UpdateNamesInBackendAsync())">Post to backend</button>
+<button @onclick="UpdateNamesInBackendAsync">Post to backend</button>
 <br>
+<button @onclick="ClearNameListInBackendAsync">Clear List</button>
 
 
 @code {
