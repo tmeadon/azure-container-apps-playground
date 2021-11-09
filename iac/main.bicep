@@ -176,3 +176,4 @@ module worker 'container.bicep' = {
 }
 
 output frontendUrl string = frontend.outputs.fqdn
+
