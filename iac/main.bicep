@@ -140,7 +140,7 @@ module worker 'container.bicep' = {
           }
           auth: [
             {
-              secretRef: 'storageConnection'
+              secretRef: 'storageconnection'
               triggerParameter: 'connection'
             }
           ]
@@ -153,7 +153,7 @@ module worker 'container.bicep' = {
         value: cosmos.outputs.primaryKey
       }
       {
-        name: 'storageConnection'
+        name: 'storageconnection'
         value: queue.outputs.storageConnection
       }
     ]
