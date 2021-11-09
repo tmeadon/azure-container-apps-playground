@@ -13,7 +13,7 @@ app.get("/", async (req, res) => {
         const response = await axios.get(`${daprBaseUrl}/state/statestore/names`);
         let returnValue = response.data ?? []
         console.log(`Received response ${response.data}.  Returning ${returnValue}`);
-        res.json(response.data);
+        res.json(returnValue);
     }
     catch (error) {
         console.error(error);
