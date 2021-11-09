@@ -110,7 +110,7 @@ module queue 'storage-queue.bicep' = {
   params: {
     location: location
     queueName: queueName
-    storageName: '${baseName}-${uniqueString(rg.id)}'
+    storageName: '${baseName}${uniqueString(rg.id)}'
   }
 }
 
