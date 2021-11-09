@@ -11,16 +11,9 @@ Welcome to your new app.
 Data retrieved from backend:
 
 <ul>
-    @if (names == null)
+    @foreach (var item in names)
     {
-        <p><em>Loading...</em></p>
-    }
-    else
-    {
-        @foreach (var item in names)
-        {
-            <li>@item</li>
-        }
+        <li>@item</li>
     }
 </ul>
 </p>
@@ -33,7 +26,7 @@ Data retrieved from backend:
 
 @code {
 
-    private IEnumerable<string> names;
+    private IEnumerable<string> names = new List<string>();
     private DaprClient daprClient;
     private string newName;
 
