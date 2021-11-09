@@ -28,7 +28,7 @@ Data retrieved from backend:
 <br>
 
 <input @bind="newName"/>
-<button >Post to backend</button>
+<button @onclick="UpdateNamesInBackendAsync">Post to backend</button>
 
 @code {
 
@@ -48,7 +48,12 @@ Data retrieved from backend:
         {
             var request = daprClient.CreateInvokeMethodRequest(HttpMethod.Get, "backend", "");
             var response = await daprClient.InvokeMethodWithResponseAsync(request);
-            names = await response.Content.ReadFromJsonAsync<IEnumerable<string>>();
+
+            if (response.Content != null)
+            {
+                Console.WriteLine($"Received response {await response.Content.ReadAsStringAsync()}");
+                names = await response.Content.ReadFromJsonAsync<IEnumerable<string>>();
+            }
         }
         catch (Exception e)
         {

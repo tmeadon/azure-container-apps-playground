@@ -11,7 +11,8 @@ app.listen(3000, () => {
 app.get("/", async (req, res) => {
     try {
         const response = await axios.get(`${daprBaseUrl}/state/statestore/names`);
-        console.log(response.data);
+        let returnValue = response.data ?? [];
+        console.log(`Received response ${response.data}.  Returning ${returnValue}`);
         res.json(response.data ?? []);
     }
     catch (error) {
